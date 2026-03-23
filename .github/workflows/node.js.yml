@@ -24,23 +24,23 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
-      # 🔒 Enforce clean install (uses package-lock.json)
+      # Install dependencies (secure + consistent)
       - name: Install dependencies
         run: npm ci
 
-      # 🔒 Security audit (fail on high/critical)
-      - name: Run npm audit
-        run: npm audit --audit-level=high
-
-      # 🧪 Run tests
+      # Run tests first
       - name: Run Jest tests
         run: npm test -- --passWithNoTests
 
-      # 🏗 Build
+      # 🔒 Security check BEFORE build
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+
+      # Build project
       - name: Build project
         run: npm run build --if-present
 
-  # 🔒 Static Code Analysis (SAST)
+  # 🔒 CodeQL (separate job - runs in parallel)
   codeql:
     name: CodeQL Security Scan
     runs-on: ubuntu-latest
