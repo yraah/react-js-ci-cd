@@ -1,28 +1,25 @@
-# .github/workflows/main.yml
-name: CI/CD Pipeline
+name: Node.js CI
 
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  build-and-test:
+  build:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-      - name: Run Tests
-        run: pytest
 
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
     steps:
-      - name: Deploy to Server
-        run: echo "Deploying to production..."
-        # Add actual deployment steps here (e.g., SSH, kubectl)
+    - uses: actions/checkout@v3
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+        cache: 'npm' # Caches dependencies for faster installs
+
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Run tests
+      run: npm test
